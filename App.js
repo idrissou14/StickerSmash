@@ -1,5 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import Button from './composant/Button';
+import ImageViewer from './composant/ImageViewer';
 
 const PlaceholderImg = require('./assets/images/background-image.png');
 
@@ -8,7 +11,11 @@ export default function App() {
     <View style={styles.container}>
       {/* <Text style={{ color: '#fff' }}>Open up App.js to start working on your app!</Text> */}
       <View style={styles.imageContainer}>
-        <Image source={PlaceholderImg} style={styles.image} />
+          <ImageViewer placeholderImageSource={PlaceholderImg} />
+      </View>
+      <View style={styles.footerContainer}>
+        <Button label='choose picture' />
+        <Button label='use this picture' /> 
       </View>
       <StatusBar style="auto" />
     </View>
@@ -26,9 +33,8 @@ const styles = StyleSheet.create({
     flex:1,
     paddingTop:58,
   },
-  image: {
-    width:320,
-    height:440,
-    borderRadius: 18,
+  footerContainer: {
+    flex: 1 / 3,
+    alignItems: 'center',
   },
 });
