@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { GestureHandlerRootView, NativeViewGestureHandler } from "react-native-gesture-handler";
+import * as MediaLibrary from 'expo-media-library';
+import { captureRef } from 'react-native-view-shot';
 
 import Button from './composant/Button';
 import ImageViewer from './composant/ImageViewer';
@@ -19,6 +21,8 @@ export default function App() {
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickedEmoji, setPickedEmoji] = useState(null);
+  const [status, requestPermissionn] = MediaLibrary.usePermissions(); //Variable pour la permission
+  const imageRef = useRef(); // zone de capture
 
   const pickImageAsync = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -31,9 +35,13 @@ export default function App() {
         setShowAppOptions(true);
       }
       else{
-        alert('You did not select any image')
+        alert('You did not select any image');
       }
   };
+
+  if(status === null){
+    requestPermissionn();  //demander la permission pour acceder a la galerie et autres
+  }
 
   const onReset = () => {
     setShowAppOptions(false)
@@ -41,20 +49,34 @@ export default function App() {
   const onAddSticker = () => {
     setIsModalVisible(true);
   };
-  const onSaveImageAsync = async () =>{
-    
-  };
   const onModalClose = () => {
     setIsModalVisible(false);
+  };
+  const onSaveImageAsync = async () => {
+    try{
+        const localUri = await captureRef(imageRef, {
+              height : 440,
+              quality : 1,
+        });
+
+        await MediaLibrary.saveToLibraryAsync(localUri);
+        if(localUri){
+          alert("Saved");
+        }
+    }
+    catch(e){
+          console.log(e);
+    }
   }
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      {/* <Text style={{ color: '#fff' }}>Open up App.js to start working on your app!</Text> */}
       <View style={styles.imageContainer}>
-          <ImageViewer placeholderImageSource={PlaceholderImg} 
-          selectedImage={selectedImage} />
-          {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
+          <View ref={imageRef} collapsable={false}> {/*vue pour la capture */}
+            <ImageViewer placeholderImageSource={PlaceholderImg} 
+              selectedImage={selectedImage} />
+              {pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />}
+         </View>
       </View>
       {showAppOptions ? (
         <View  style={styles.optionsContainer}>

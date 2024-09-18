@@ -6,7 +6,7 @@ export default function EmojiPicker({ isVisible, children, onClose }){
         <Modal visible={isVisible} animationType='slide' transparent>
             <View style={styles.modalContent}>
                 <View style={styles.modalContainer}>
-                    <Text style={styles.Title}>Choose a Sticker</Text>
+                    <Text style={styles.title}>Choose a Sticker</Text>
                     <Pressable style={styles.closeButton} onPress={onClose}>
                         <MaterialIcons name='close' size={22} color='white' />
                     </Pressable>
